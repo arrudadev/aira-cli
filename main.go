@@ -128,7 +128,12 @@ func sendToAIReview(content string) {
 	if err != nil {
 		log.Fatalf("error making request to Ollama: %v", err)
 	}
-	defer resp.Body.Close()
+
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Fatalf("error closing response body: %v", err)
+		}
+	}()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
